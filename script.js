@@ -1,65 +1,65 @@
 const questions = [
   {
     question: "What does HTML stand for?",
-    options: [
+    answers: [
       "Hyper Text Markup Language",
       "High Text Machine Language",
       "Hyper Transfer Markup Language",
       "Home Tool Markup Language",
     ],
-    answer: 0,
+    correct: 0,
   },
   {
     question: "Which HTML tag is used to create a hyperlink?",
-    options: ["<link>", "<a>", "<href>", "<url>"],
-    answer: 1,
+    answers: ["<link>", "<a>", "<href>", "<url>"],
+    correct: 1,
   },
   {
     question: "Which HTML element is used to display an image?",
-    options: ["<image>", "<picture>", "<img>", "<src>"],
-    answer: 2,
+    answers: ["<image>", "<picture>", "<img>", "<src>"],
+    correct: 2,
   },
   {
     question: "Which CSS property changes the text color?",
-    options: ["font-style", "text-color", "color", "background-color"],
-    answer: 2,
+    answers: ["font-style", "text-color", "color", "background-color"],
+    correct: 2,
   },
   {
     question: "Which CSS property controls the space outside an element?",
-    options: ["padding", "margin", "border", "spacing"],
-    answer: 1,
+    answers: ["padding", "margin", "border", "spacing"],
+    correct: 1,
   },
   {
     question: "How do you select an element with the ID 'header' in CSS?",
-    options: [".header", "#header", "*header", "header"],
-    answer: 1,
+    answers: [".header", "#header", "*header", "header"],
+    correct: 1,
   },
   {
     question:
       "Which keyword declares a variable that can be reassigned in JavaScript?",
-    options: ["const", "let", "static", "define"],
-    answer: 1,
+    answers: ["const", "let", "static", "define"],
+    correct: 1,
   },
   {
     question: "Which method adds an element to the end of a JavaScript array?",
-    options: ["push()", "pop()", "shift()", "unshift()"],
-    answer: 0,
+    answers: ["push()", "pop()", "shift()", "unshift()"],
+    correct: 0,
   },
   {
     question: "What does === check in JavaScript?",
-    options: [
+    answers: [
       "Only value equality",
       "Only type equality",
       "Value and type equality",
       "Whether two variables exist",
     ],
-    answer: 2,
+    correct: 2,
   },
   {
     question:
       "Which JavaScript function prints a message to the browser console?",
-    options: ["print()", "console.log()", "document.write()", "alert.log()"],
-    answer: 1,
+    answers: ["print()", "console.log()", "document.write()", "alert.log()"],
+    correct: 1,
   },
 ];
 const questionCount = document.getElementById("question-count");
@@ -69,6 +69,12 @@ const startScreen = document.getElementById("start-screen");
 const quizScreen = document.getElementById("quiz-screen");
 questionText = document.getElementById("question-text");
 progressBar = document.getElementById("progress-bar");
+const scoreText = document.getElementById("score");
+currentNumber = document.getElementById("current-number");
+totalNumber = document.getElementById("total-number");
+const answersEl = document.getElementById("answers");
+
+let currentQuestion = 0;
 
 // Start the quiz
 
@@ -77,16 +83,34 @@ const startQuiz = () => {
   quizScreen.removeAttribute("hidden");
   questionCount.textContent = questions.length;
   bestScore.textContent = 0;
-  score.textContent = 0;
+  scoreText.textContent = 0;
   progressBar.style.width = "0%";
-  currentQuestion = 0;
+
   showQuestion();
 };
 
 const showQuestion = () => {
   const question = questions[currentQuestion];
   questionText.textContent = question.question;
-  progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
+  currentNumber.textContent = currentQuestion + 1;
+  totalNumber.textContent = questions.length;
+
+  question.answers.forEach((text, index) => {
+    const button = document.createElement("button");
+    button.className = "answer";
+    button.type = "button";
+
+    const key = document.createElement("span");
+    key.className = "answer__key";
+    key.textContent = index + 1; // 1, 2, 3, 4
+
+    const label = document.createElement("span");
+    label.className = "answer__text";
+    label.textContent = text; // safe — no HTML injection
+
+    button.append(key, label);
+    answersEl.append(button);
+  });
 };
 
-startScreen.addEventListener("click", startQuiz);
+startBtn.addEventListener("click", startQuiz);
