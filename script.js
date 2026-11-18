@@ -65,40 +65,60 @@ const questions = [
 const questionCount = document.getElementById("question-count");
 const bestScore = document.getElementById("best-score");
 const startBtn = document.getElementById("start-btn");
+const nextBtn = document.getElementById("next-btn");
 const startScreen = document.getElementById("start-screen");
 const quizScreen = document.getElementById("quiz-screen");
-questionText = document.getElementById("question-text");
-progressBar = document.getElementById("progress-bar");
+const resultsScreen = document.getElementById("results-screen");
+const questionText = document.getElementById("question-text");
+const progressBar = document.getElementById("progress-bar");
 const scoreText = document.getElementById("score");
-currentNumber = document.getElementById("current-number");
-totalNumber = document.getElementById("total-number");
+const currentNumber = document.getElementById("current-number");
+const totalNumber = document.getElementById("total-number");
 const answersEl = document.getElementById("answers");
+const feedback = document.getElementById("feedback");
+const screens = [startScreen, quizScreen, resultsScreen];
 
 let currentQuestion = 0;
+let score = 0;
+questionCount.textContent = questions.length;
 
 // Start the quiz
 
 const startQuiz = () => {
-  startScreen.setAttribute("hidden", "");
-  quizScreen.removeAttribute("hidden");
-  questionCount.textContent = questions.length;
+  showScreen(quizScreen);
   bestScore.textContent = 0;
   scoreText.textContent = 0;
+  feedback.hidden = true;
+  score = 0;
   progressBar.style.width = "0%";
 
   showQuestion();
 };
 
+const showScreen = (currentScreen) => {
+  screens.forEach((s) => {
+    if (s === currentScreen) {
+      s.hidden = false;
+    } else {
+      s.hidden = true;
+    }
+  });
+};
 const showQuestion = () => {
   const question = questions[currentQuestion];
   questionText.textContent = question.question;
   currentNumber.textContent = currentQuestion + 1;
   totalNumber.textContent = questions.length;
+  answersEl.innerHTML = "";
+  progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+  ///making html elements for the answers
 
   question.answers.forEach((text, index) => {
     const button = document.createElement("button");
     button.className = "answer";
     button.type = "button";
+    button.dataset.index = index;
 
     const key = document.createElement("span");
     key.className = "answer__key";
@@ -109,8 +129,33 @@ const showQuestion = () => {
     label.textContent = text; // safe — no HTML injection
 
     button.append(key, label);
+    button.addEventListener("click", () => checkAnswer(index));
     answersEl.append(button);
   });
 };
 
+const checkAnswer = (answerIndex) => {
+  if (answerIndex === questions[currentQuestion].correct) {
+    score++;
+    scoreText.textContent = score;
+    feedback.textContent = "Correct!";
+    feedback.classList.add("is-correct");
+    feedback.classList.remove("is-wrong");
+  } else {
+    scoreText.textContent = score;
+    feedback.textContent = `Sorry, the correct answer is ${questions[currentQuestion].answers[questions[currentQuestion].correct]}!`;
+    feedback.classList.add("is-wrong");
+  }
+  feedback.hidden = false;
+
+  // answersEl.childNodes.forEach((btnChild) => {
+  //   if (btnChild.nodeName === "BUTTON") {
+  //     btnChild.disabled = true;
+  //   }
+  // });
+
+  answersEl.children.forEach((btn) => (btn.disabled = true));
+};
+
+//event listeners
 startBtn.addEventListener("click", startQuiz);
