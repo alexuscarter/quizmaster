@@ -62,3 +62,31 @@ const questions = [
     answer: 1,
   },
 ];
+const questionCount = document.getElementById("question-count");
+const bestScore = document.getElementById("best-score");
+const startBtn = document.getElementById("start-btn");
+const startScreen = document.getElementById("start-screen");
+const quizScreen = document.getElementById("quiz-screen");
+questionText = document.getElementById("question-text");
+progressBar = document.getElementById("progress-bar");
+
+// Start the quiz
+
+const startQuiz = () => {
+  startScreen.setAttribute("hidden", "");
+  quizScreen.removeAttribute("hidden");
+  questionCount.textContent = questions.length;
+  bestScore.textContent = 0;
+  score.textContent = 0;
+  progressBar.style.width = "0%";
+  currentQuestion = 0;
+  showQuestion();
+};
+
+const showQuestion = () => {
+  const question = questions[currentQuestion];
+  questionText.textContent = question.question;
+  progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
+};
+
+startScreen.addEventListener("click", startQuiz);
