@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuizMaster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <!-- ============ START SCREEN ============ -->
+      <section class="screen screen--start" id="start-screen">
+        <div class="logo" aria-hidden="true">?</div>
+        <h1 class="title">QuizMaster</h1>
+        <p class="subtitle">Test your HTML, CSS and JavaScript knowledge.</p>
+
+        <ul class="stats">
+          <li class="stat">
+            <span class="stat__value" id="question-count">10</span>
+            <span class="stat__label">Questions</span>
+          </li>
+          <li class="stat">
+            <span class="stat__value" id="best-score">0</span>
+            <span class="stat__label">Best score</span>
+          </li>
+        </ul>
+
+        <button class="btn btn--primary btn--large" id="start-btn">
+          Start quiz
+        </button>
+        <p class="hint">
+          Tip: use keys <kbd>1</kbd>–<kbd>4</kbd> to answer and
+          <kbd>Enter</kbd> for next.
+        </p>
+      </section>
+
+      <!-- ============ QUESTION SCREEN ============ -->
+      <!-- Remove the "hidden" attribute in JS to show a screen, add it to hide one. -->
+      <section class="screen screen--quiz" id="quiz-screen" hidden>
+        <header class="quiz-header">
+          <p class="quiz-header__count">
+            Question <span id="current-number">3</span> of
+            <span id="total-number">10</span>
+          </p>
+          <p class="quiz-header__score">Score: <span id="score">2</span></p>
+        </header>
+
+        <!-- Set the bar's width in JS, e.g. bar.style.width = "30%" -->
+        <div class="progress" aria-hidden="true">
+          <div class="progress__bar" id="progress-bar" style="width: 30%"></div>
+        </div>
+
+        <h2 class="question" id="question-text">
+          Which tag makes the largest heading?
+        </h2>
+
+        <!-- Generate these buttons with JavaScript. They are here as an example.
+           States: add class "is-correct" or "is-wrong", and set disabled = true after answering. -->
+        <div class="answers" id="answers">
+          <button class="answer" disabled>
+            <span class="answer__key">1</span>
+            <span class="answer__text">&lt;h6&gt;</span>
+          </button>
+          <button class="answer is-correct" disabled>
+            <span class="answer__key">2</span>
+            <span class="answer__text">&lt;h1&gt;</span>
+          </button>
+          <button class="answer is-wrong" disabled>
+            <span class="answer__key">3</span>
+            <span class="answer__text">&lt;head&gt;</span>
+          </button>
+          <button class="answer" disabled>
+            <span class="answer__key">4</span>
+            <span class="answer__text">&lt;header&gt;</span>
+          </button>
+        </div>
+
+        <!-- Feedback text: add class "is-correct" or "is-wrong". aria-live makes screen readers announce it. -->
+        <div class="quiz-footer">
+          <p class="feedback is-wrong" id="feedback" aria-live="polite">
+            Not quite — the answer is &lt;h1&gt;.
+          </p>
+          <button class="btn btn--primary" id="next-btn">Next →</button>
+        </div>
+      </section>
+
+      <!-- ============ RESULTS SCREEN ============ -->
+      <section class="screen screen--results" id="results-screen" hidden>
+        <!-- Set --percent in JS: ring.style.setProperty("--percent", 70) -->
+        <div class="score-ring" id="score-ring" style="--percent: 70">
+          <div class="score-ring__inner">
+            <span class="score-ring__value"
+              ><span id="final-score">7</span>/<span id="final-total"
+                >10</span
+              ></span
+            >
+            <span class="score-ring__label">correct</span>
+          </div>
+        </div>
+
+        <h2 class="results-title" id="results-message">Nice work!</h2>
+        <p class="subtitle" id="best-message">New best score 🎉</p>
+
+        <div class="review">
+          <h3 class="review__title">Questions to review</h3>
+          <!-- Generate these list items with JavaScript. -->
+          <ul class="review__list" id="review-list">
+            <li class="review__item">
+              <p class="review__question">
+                Which tag makes the largest heading?
+              </p>
+              <p class="review__answer">
+                <span class="review__yours">Your answer: &lt;head&gt;</span>
+                <span class="review__correct">Correct: &lt;h1&gt;</span>
+              </p>
+            </li>
+            <li class="review__item">
+              <p class="review__question">
+                Which CSS property changes text color?
+              </p>
+              <p class="review__answer">
+                <span class="review__yours">Your answer: font-color</span>
+                <span class="review__correct">Correct: color</span>
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <button class="btn btn--primary btn--large" id="restart-btn">
+          Play again
+        </button>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
