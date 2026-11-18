@@ -87,18 +87,33 @@ const playAgainBtn = document.getElementById("restart-btn");
 let currentQuestion = 0;
 let score = 0;
 let wrongAnswers = [];
+let quizQuestions = [];
+let best = Number(localStorage.getItem("quizBestScore")) || 0;
 
 questionCount.textContent = questions.length;
+bestScore.textContent = best;
+
+// Fisher–Yates: shuffle a copy so the original questions array stays untouched
+const shuffle = (array) => {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
 
 // Start the quiz
 
 const startQuiz = () => {
   showScreen(quizScreen);
-  scoreText.textContent = 0;
-  feedback.hidden = true;
+  quizQuestions = shuffle(questions);
+  console.log(quizQuestions);
+  currentQuestion = 0;
   score = 0;
-  progressBar.style.width = "0%";
   wrongAnswers = [];
+  scoreText.textContent = 0;
+  progressBar.style.width = "0%";
   showQuestion();
 };
 
@@ -112,12 +127,12 @@ const showScreen = (currentScreen) => {
   });
 };
 const showQuestion = () => {
-  const question = questions[currentQuestion];
+  const question = quizQuestions[currentQuestion];
   questionText.textContent = question.question;
   currentNumber.textContent = currentQuestion + 1;
-  totalNumber.textContent = questions.length;
+  totalNumber.textContent = quizQuestions.length;
   answersEl.innerHTML = "";
-  progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+  progressBar.style.width = `${((currentQuestion + 1) / quizQuestions.length) * 100}%`;
   nextBtn.hidden = true;
   feedback.hidden = true;
   ///making html elements for the answers
@@ -143,8 +158,8 @@ const showQuestion = () => {
 
 const checkAnswer = (answerIndex) => {
   const answerButtons = answersEl.querySelectorAll(".answer");
-  const correctIndex = questions[currentQuestion].correct;
-  const question = questions[currentQuestion];
+  const correctIndex = quizQuestions[currentQuestion].correct;
+  const question = quizQuestions[currentQuestion];
 
   if (answerIndex === correctIndex) {
     score++;
@@ -152,7 +167,6 @@ const checkAnswer = (answerIndex) => {
     feedback.textContent = "Correct!";
     feedback.classList.add("is-correct");
     feedback.classList.remove("is-wrong");
-    answerButtons[answerIndex].classList.add("is-correct");
   } else {
     wrongAnswers.push({
       question: question.question,
@@ -163,8 +177,9 @@ const checkAnswer = (answerIndex) => {
     feedback.classList.add("is-wrong");
     feedback.classList.remove("is-correct");
     answerButtons[answerIndex].classList.add("is-wrong");
-    console.log(wrongAnswers);
   }
+
+  answerButtons[correctIndex].classList.add("is-correct");
   answerButtons.forEach((btn) => {
     btn.disabled = true;
   });
@@ -174,7 +189,7 @@ const checkAnswer = (answerIndex) => {
 
 const nextQuestion = () => {
   currentQuestion++;
-  if (currentQuestion < questions.length) {
+  if (currentQuestion < quizQuestions.length) {
     showQuestion();
   } else {
     showResults();
@@ -184,10 +199,18 @@ const nextQuestion = () => {
 const showResults = () => {
   showScreen(resultsScreen);
   finalScore.textContent = score;
-  ring.style.setProperty("--percent", score * 10);
-  resultsMessage.textContent = `You got ${score} out of ${questions.length} questions correct!`;
-  bestScore.textContent = score;
-  bestMessage.textContent = `Your best score is ${bestScore.textContent}!`;
+  finalTotal.textContent = quizQuestions.length;
+  ring.style.setProperty("--percent", (score / quizQuestions.length) * 100);
+  resultsMessage.textContent = `You got ${score} out of ${quizQuestions.length} questions correct!`;
+
+  if (score > best) {
+    best = score;
+    localStorage.setItem("quizBestScore", best);
+    bestScore.textContent = best;
+    bestMessage.textContent = "New best score 🎉";
+  } else {
+    bestMessage.textContent = `Best score: ${best}`;
+  }
 
   reviewList.innerHTML = "";
   wrongAnswers.forEach((item) => {
@@ -217,12 +240,8 @@ const showResults = () => {
 
 const playAgain = () => {
   showScreen(startScreen);
-  bestScore.textContent = 0;
-  currentQuestion = 0;
-  score = 0;
-  wrongAnswers = [];
-  showQuestion();
 };
+
 //event listeners
 startBtn.addEventListener("click", startQuiz);
 nextBtn.addEventListener("click", nextQuestion);
