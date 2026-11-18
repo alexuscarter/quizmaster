@@ -82,6 +82,7 @@ const finalTotal = document.getElementById("final-total");
 const resultsMessage = document.getElementById("results-message");
 const bestMessage = document.getElementById("best-message");
 const ring = document.getElementById("score-ring");
+const review = document.getElementById("review");
 const reviewList = document.getElementById("review-list");
 const playAgainBtn = document.getElementById("restart-btn");
 let currentQuestion = 0;
@@ -158,8 +159,9 @@ const showQuestion = () => {
 
 const checkAnswer = (answerIndex) => {
   const answerButtons = answersEl.querySelectorAll(".answer");
-  const correctIndex = quizQuestions[currentQuestion].correct;
+
   const question = quizQuestions[currentQuestion];
+  const correctIndex = question.correct;
 
   if (answerIndex === correctIndex) {
     score++;
@@ -201,7 +203,13 @@ const showResults = () => {
   finalScore.textContent = score;
   finalTotal.textContent = quizQuestions.length;
   ring.style.setProperty("--percent", (score / quizQuestions.length) * 100);
-  resultsMessage.textContent = `You got ${score} out of ${quizQuestions.length} questions correct!`;
+  if (score < 5) {
+    resultsMessage.textContent = "Keep practicing — you'll get there!";
+  } else if (score <= 7) {
+    resultsMessage.textContent = "Nice work!";
+  } else {
+    resultsMessage.textContent = "Excellent!";
+  }
 
   if (score > best) {
     best = score;
@@ -212,6 +220,7 @@ const showResults = () => {
     bestMessage.textContent = `Best score: ${best}`;
   }
 
+  review.hidden = wrongAnswers.length === 0;
   reviewList.innerHTML = "";
   wrongAnswers.forEach((item) => {
     const li = document.createElement("li");
